@@ -6,12 +6,12 @@ import {
   TableRow,
   CircularProgress,
   Alert,
-  Button,
   FormControl,
   InputLabel,
   MenuItem,
   Select,
   SelectChangeEvent,
+  FormGroup,
 } from "@mui/material";
 import { useStackOverflowTags } from "../hooks/useStackOverflowTags";
 import Paginator from "./Paginator";
@@ -36,9 +36,8 @@ const TagsTable = () => {
     sort,
   );
 
-  const handlePageChange = (direction: string) => {
-    setPage((prevPage) => prevPage + (direction === "next" ? 1 : -1));
-  };
+  const totalItems = data?.total;
+  const totalPages = Math.ceil(totalItems / pageSize);
 
   const handleSortChange = (value: string) => {
     setSort(value);
@@ -46,10 +45,6 @@ const TagsTable = () => {
 
   const handlePageSizeChange = (event: SelectChangeEvent) => {
     setPageSize(Number(event.target.value));
-  };
-
-  const toggleOrder = () => {
-    setOrder((prevOrder) => (prevOrder === "desc" ? "asc" : "desc"));
   };
 
   return (
@@ -60,23 +55,38 @@ const TagsTable = () => {
         <Alert severity="error">An error occurred while fetching tags.</Alert>
       ) : (
         <>
-          <FormControl>
-            <InputLabel>Page Size</InputLabel>
-            <Select
-              value={pageSize}
-              onChange={
-                handlePageSizeChange as (
-                  event: SelectChangeEvent<number>,
-                ) => void
-              }
-            >
-              <MenuItem value={10}>10</MenuItem>
-              <MenuItem value={20}>20</MenuItem>
-              <MenuItem value={50}>50</MenuItem>
-            </Select>
-          </FormControl>
-          <Button onClick={toggleOrder}>Toggle Order</Button>
-          <SortSelector onSortChange={handleSortChange} />
+          <FormGroup row sx={{ ml: 2, gap: 1 }}>
+            <SortSelector onSortChange={handleSortChange} />
+            <FormControl>
+              <InputLabel>Order</InputLabel>
+              <Select
+                autoWidth
+                value={order}
+                onChange={(event) =>
+                  setOrder(event.target.value as "asc" | "desc")
+                }
+                label="Order"
+              >
+                <MenuItem value="asc">Ascending</MenuItem>
+                <MenuItem value="desc">Descending</MenuItem>
+              </Select>
+            </FormControl>
+            <FormControl>
+              <InputLabel>Page Size</InputLabel>
+              <Select
+                value={pageSize}
+                onChange={
+                  handlePageSizeChange as (
+                    event: SelectChangeEvent<number>,
+                  ) => void
+                }
+              >
+                <MenuItem value={10}>10</MenuItem>
+                <MenuItem value={20}>20</MenuItem>
+                <MenuItem value={50}>50</MenuItem>
+              </Select>
+            </FormControl>
+          </FormGroup>
           <Table>
             <TableHead>
               <TableRow>
@@ -85,7 +95,7 @@ const TagsTable = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {data?.map((tag: Tag) => (
+              {data?.items.map((tag: Tag) => (
                 <TableRow key={tag.name}>
                   <TableCell component="th" scope="row">
                     {tag.name}
@@ -95,7 +105,13 @@ const TagsTable = () => {
               ))}
             </TableBody>
           </Table>
-          <Paginator onPageChange={handlePageChange} />
+          <Paginator
+            count={totalPages}
+            page={page}
+            onPageChange={(event, value) => {
+              setPage(value); // Assuming setPage updates your component's state for the current page
+            }}
+          />
         </>
       )}
     </div>

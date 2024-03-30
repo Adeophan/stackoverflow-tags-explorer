@@ -1,4 +1,3 @@
-//import "./App.css";
 import TagsTable from "./components/TagsTable";
 
 function App() {

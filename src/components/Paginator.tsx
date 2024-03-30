@@ -1,14 +1,23 @@
-import { Button, Stack } from "@mui/material";
+import React from "react";
+import Pagination from "@mui/material/Pagination";
+import Stack from "@mui/material/Stack";
 
 interface PaginatorProps {
-  onPageChange: (direction: string) => void;
+  count: number; // Total number of pages
+  page: number; // Current page
+  onPageChange: (event: React.ChangeEvent<unknown>, page: number) => void;
 }
 
-const Paginator = ({ onPageChange }: PaginatorProps) => {
+const Paginator = ({ count, page, onPageChange }: PaginatorProps) => {
   return (
-    <Stack direction="row" spacing={2}>
-      <Button onClick={() => onPageChange("prev")}>Previous</Button>
-      <Button onClick={() => onPageChange("next")}>Next</Button>
+    <Stack spacing={2} justifyContent="center" padding={2}>
+      <Pagination
+        count={count}
+        page={page}
+        onChange={onPageChange}
+        shape="rounded"
+        color="primary"
+      />
     </Stack>
   );
 };

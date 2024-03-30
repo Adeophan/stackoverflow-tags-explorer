@@ -1,10 +1,7 @@
 import React from "react";
-import { createRoot } from "react-dom/client"; // Make sure this import is correct
+import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import App from "./App"; // You don't need to specify the extension
-
-// If you have global styles, you can uncomment the next line
-// import './index.css';
+import App from "./App";
 
 const container = document.getElementById("root");
 if (!container) throw new Error("Failed to find the root element");

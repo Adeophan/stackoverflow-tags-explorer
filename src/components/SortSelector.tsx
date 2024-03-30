@@ -16,7 +16,7 @@ const SortSelector = ({ onSortChange }: SortSelectorProps) => {
   };
 
   return (
-    <FormControl fullWidth>
+    <FormControl>
       <InputLabel>Sort By</InputLabel>
       <Select defaultValue="popular" label="Sort By" onChange={handleChange}>
         <MenuItem value="popular">Popularity</MenuItem>
