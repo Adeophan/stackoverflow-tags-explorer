@@ -4,19 +4,21 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  TableFooter,
+  TablePagination,
   CircularProgress,
   Alert,
   FormControl,
   InputLabel,
   MenuItem,
   Select,
-  SelectChangeEvent,
   FormGroup,
+  TextField,
+  Button,
 } from "@mui/material";
 import { useStackOverflowTags } from "../hooks/useStackOverflowTags";
-import Paginator from "./Paginator";
 import SortSelector from "./SortSelector";
-import { useState } from "react";
+import { useState, KeyboardEvent } from "react";
 
 interface Tag {
   name: string;
@@ -37,14 +39,64 @@ const TagsTable = () => {
   );
 
   const totalItems = data?.total;
-  const totalPages = Math.ceil(totalItems / pageSize);
+
+  const [tempPageSize, setTempPageSize] = useState(pageSize.toString());
+  const [inputError, setInputError] = useState(false);
+
+  const handleTempPageSizeChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const newValue = event.target.value;
+    const numValue = Number(newValue);
+
+    if (newValue === "" || isNaN(numValue)) {
+      setInputError(true);
+      setTempPageSize(newValue);
+    } else {
+      if (numValue > 100) {
+        setTempPageSize("100");
+      } else if (numValue < 1) {
+        setInputError(true);
+        setTempPageSize(newValue);
+      } else {
+        setInputError(false);
+        setTempPageSize(newValue);
+      }
+    }
+  };
+
+  const updatePageSize = () => {
+    const numValue = Number(tempPageSize);
+    if (!inputError && numValue >= 1 && numValue <= 100) {
+      setPageSize(numValue);
+    } else {
+      setPageSize(10);
+      setTempPageSize("10");
+      setInputError(false);
+    }
+  };
+
+  const handleKeyPress = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      updatePageSize();
+    }
+  };
 
   const handleSortChange = (value: string) => {
+    if (value === "popular") {
+      setOrder("desc");
+    } else {
+      setOrder("asc");
+    }
     setSort(value);
   };
 
-  const handlePageSizeChange = (event: SelectChangeEvent) => {
-    setPageSize(Number(event.target.value));
+  const handleChangePage = (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    newPage: number,
+  ) => {
+    setPage(newPage + 1);
   };
 
   return (
@@ -71,21 +123,29 @@ const TagsTable = () => {
                 <MenuItem value="desc">Descending</MenuItem>
               </Select>
             </FormControl>
-            <FormControl>
-              <InputLabel>Page Size</InputLabel>
-              <Select
-                value={pageSize}
-                onChange={
-                  handlePageSizeChange as (
-                    event: SelectChangeEvent<number>,
-                  ) => void
+            <FormControl variant="outlined" size="small">
+              <TextField
+                error={inputError}
+                helperText={
+                  inputError ? "Please enter a number between 1 and 100" : ""
                 }
-              >
-                <MenuItem value={10}>10</MenuItem>
-                <MenuItem value={20}>20</MenuItem>
-                <MenuItem value={50}>50</MenuItem>
-              </Select>
+                label="Rows per page"
+                type="number"
+                variant="outlined"
+                value={tempPageSize}
+                onChange={handleTempPageSizeChange}
+                onKeyDown={handleKeyPress}
+                InputProps={{
+                  inputProps: {
+                    min: 1,
+                    max: 100,
+                  },
+                }}
+              />
             </FormControl>
+            <Button variant="contained" onClick={updatePageSize}>
+              Go
+            </Button>
           </FormGroup>
           <Table>
             <TableHead>
@@ -104,14 +164,38 @@ const TagsTable = () => {
                 </TableRow>
               ))}
             </TableBody>
+            <TableFooter>
+              <TableRow>
+                <TablePagination
+                  showFirstButton
+                  showLastButton
+                  colSpan={3}
+                  count={totalItems}
+                  rowsPerPage={pageSize}
+                  page={page - 1}
+                  rowsPerPageOptions={[]}
+                  slotProps={{
+                    select: {
+                      inputProps: {
+                        "aria-label": "rows per page",
+                      },
+                      native: true,
+                    },
+                  }}
+                  onPageChange={handleChangePage}
+                  /* onRowsPerPageChange={handlePageSizeChange}
+                  ActionsComponent={TablePaginationActions} */
+                />
+              </TableRow>
+            </TableFooter>
           </Table>
-          <Paginator
+          {/* <Paginator
             count={totalPages}
             page={page}
             onPageChange={(event, value) => {
               setPage(value); // Assuming setPage updates your component's state for the current page
             }}
-          />
+          /> */}
         </>
       )}
     </div>
