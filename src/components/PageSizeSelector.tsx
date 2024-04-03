@@ -58,6 +58,12 @@ const PageSizeSelector: React.FC<PageSizeSelectorProps> = ({
     }
   };
 
+  const handleKeyPress = (event: React.KeyboardEvent) => {
+    if (event.key === "Enter") {
+      handleGoClick();
+    }
+  };
+
   const handleGoClick = () => {
     if (validatePageSize(tempPageSize)) {
       setPageSize(Number(tempPageSize));
@@ -74,6 +80,7 @@ const PageSizeSelector: React.FC<PageSizeSelectorProps> = ({
           variant="outlined"
           type="number"
           value={tempPageSize}
+          onKeyDown={handleKeyPress}
           onChange={handleTempPageSizeChange}
           InputProps={{
             startAdornment: (

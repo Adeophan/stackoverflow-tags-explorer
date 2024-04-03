@@ -16,6 +16,9 @@ const TagsPagination: React.FC<TagsPaginationProps> = ({
 }) => {
   return (
     <TablePagination
+      showFirstButton
+      showLastButton
+      colSpan={3}
       component="div"
       count={count}
       page={page - 1}
