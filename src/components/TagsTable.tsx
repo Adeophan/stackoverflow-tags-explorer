@@ -15,7 +15,10 @@ import {
   FormGroup,
   TextField,
   Button,
+  InputAdornment,
+  IconButton,
 } from "@mui/material";
+import { Remove as RemoveIcon, Add as AddIcon } from "@mui/icons-material";
 import { useStackOverflowTags } from "../hooks/useStackOverflowTags";
 import SortSelector from "./SortSelector";
 import { useState, KeyboardEvent } from "react";
@@ -123,12 +126,11 @@ const TagsTable = () => {
                 <MenuItem value="desc">Descending</MenuItem>
               </Select>
             </FormControl>
-            <FormControl variant="outlined" size="small">
+            <FormControl variant="outlined">
               <TextField
                 error={inputError}
-                helperText={
-                  inputError ? "Please enter a number between 1 and 100" : ""
-                }
+                helperText={inputError ? "Enter a number (1-100)" : ""}
+                InputLabelProps={{ shrink: true }}
                 label="Rows per page"
                 type="number"
                 variant="outlined"
@@ -136,9 +138,54 @@ const TagsTable = () => {
                 onChange={handleTempPageSizeChange}
                 onKeyDown={handleKeyPress}
                 InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <IconButton
+                        onClick={() =>
+                          setTempPageSize(
+                            String(Math.max(Number(tempPageSize) - 1, 1)),
+                          )
+                        }
+                        edge="start"
+                        size="small"
+                        sx={{ mr: -3 }}
+                      >
+                        <RemoveIcon />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() =>
+                          setTempPageSize(
+                            String(Math.min(Number(tempPageSize) + 1, 100)),
+                          )
+                        }
+                        edge="end"
+                        size="small"
+                        sx={{ ml: -3 }}
+                      >
+                        <AddIcon />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
                   inputProps: {
                     min: 1,
                     max: 100,
+                    style: { textAlign: "center" },
+                  },
+                }}
+                sx={{
+                  width: "auto",
+                  minWidth: 110,
+                  "input::-webkit-outer-spin-button, input::-webkit-inner-spin-button":
+                    {
+                      WebkitAppearance: "none",
+                      margin: 0,
+                    },
+                  "input[type=number]": {
+                    MozAppearance: "textfield",
                   },
                 }}
               />
@@ -183,19 +230,10 @@ const TagsTable = () => {
                     },
                   }}
                   onPageChange={handleChangePage}
-                  /* onRowsPerPageChange={handlePageSizeChange}
-                  ActionsComponent={TablePaginationActions} */
                 />
               </TableRow>
             </TableFooter>
           </Table>
-          {/* <Paginator
-            count={totalPages}
-            page={page}
-            onPageChange={(event, value) => {
-              setPage(value); // Assuming setPage updates your component's state for the current page
-            }}
-          /> */}
         </>
       )}
     </div>
