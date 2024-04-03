@@ -194,11 +194,18 @@ const TagsTable = () => {
               Go
             </Button>
           </FormGroup>
-          <Table>
+          <Table stickyHeader>
             <TableHead>
               <TableRow>
-                <TableCell>Tag</TableCell>
-                <TableCell align="right">Posts Count</TableCell>
+                <TableCell sx={{ fontWeight: "bold", fontSize: "1.0rem" }}>
+                  Tag
+                </TableCell>
+                <TableCell
+                  align="right"
+                  sx={{ fontWeight: "bold", fontSize: "1.0rem" }}
+                >
+                  Posts Count
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
