@@ -19,7 +19,7 @@ Stackoverflow Tags Explorer is a dynamic web application designed to showcase ta
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your/repository.git
+   git clone https://github.com/Adeophan/stackoverflow-tags-explorer
    ```
 2. Install dependencies:
    ```bash
